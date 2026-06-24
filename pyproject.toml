@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "breastmri-features"
+version = "0.1.0"
+description = "Reproducible, citation-backed derivation of quantitative and BI-RADS/kinetic descriptors from breast DCE-MRI segmentations"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "Duong Lab" }]
+keywords = ["breast", "MRI", "radiomics", "BI-RADS", "IBSI", "DCE-MRI"]
+dependencies = ["numpy>=1.21", "scipy>=1.7", "scikit-image>=0.19"]
+
+[project.optional-dependencies]
+dev = ["pytest>=7", "pandas>=1.3", "openpyxl>=3"]
+
+[tool.setuptools]
+packages = ["breastmri_features"]
