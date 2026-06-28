@@ -91,10 +91,6 @@ MIT.
 
 ## AI usage statement
 
-This package was developed with the assistance of a large language model (Anthropic's Claude). The
-model contributed by implementing the cited algorithms in code, writing the unit tests and this
-documentation, and organizing the package layout. The methods themselves are established,
-peer-reviewed algorithms (cited per feature above); all code was reviewed, tested, and validated
+This package was developed with the assistance of a large language model (Anthropic's Claude). All code was reviewed, tested, and validated
 against vendor reference values by the authors, who take full responsibility for its correctness and
-content. In keeping with common practice for research software, this AI assistance is acknowledged
-here rather than as a commit author or co-author.
+content. 
