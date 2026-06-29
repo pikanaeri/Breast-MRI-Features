@@ -63,15 +63,17 @@ These are the **12 imaging concepts** used as model variables (the canonical set
 On 384 I-SPY2 patients with vendor MRI features, the algorithmic derivations agreed with the
 published sheet:
 
-| Feature | Pearson r | scale |
+| Feature | Pearson r | alg/sheet ratio |
 |---|---|---|
-| Tumor volume | 1.00 | 0.96 |
-| Sphericity | 0.84 | 1.13 |
-| Longest diameter (RECIST) | 0.67 | 1.40 (calibrate when mixing) |
+| Tumor volume | 0.998 | 0.95 |
+| Sphericity | 0.815 | 1.10 |
+| Longest diameter (RECIST) | 0.558 | ~1.0 (pre-calibrated) |
+| BPE (%) | 0.298 | 1.31 |
 
-Volume and sphericity reproduce vendor values directly; the longest diameter, a manual RECIST
-measurement, is approximated by the in-plane caliper and should be linearly calibrated to the
-vendor scale when both are combined in one cohort.
+Volume reproduces the vendor values almost exactly and sphericity closely; the longest diameter (a
+manual RECIST measurement) is approximated by the in-plane caliper and is linearly calibrated to the
+vendor scale (matched means, moderate correlation). BPE is the weakest — an in-crop proxy, a known
+limitation, since true BPE requires whole-breast fibroglandular segmentation absent from the lesion crop.
 
 ## References
 
