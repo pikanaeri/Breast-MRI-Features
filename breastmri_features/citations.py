@@ -20,6 +20,7 @@ CITATIONS = {
                       "Dalmis MU, et al. CAD system for breast DCE-MRI. Med Phys 2016;43:6260-6273."],
     "initial_enhancement_rate": ["Agliozzo 2012; Dalmis 2016 (early-phase enhancement)."],
     "internal_enhancement": ["Rim / heterogeneity descriptors (Agliozzo 2012; Huang 2013)."],
-    "bpe": ["Wei D, et al. Fully automatic FGT and BPE quantification. Med Phys 2021;48:238-252.",
-            "Zhu Y, et al. Automated BPE as a biomarker. Breast Cancer Res Treat 2026."],
+    "multifocality": ["Connected-component count of the cleaned mask (shape.n_components)."],
+    "bpe": ["Wei D, et al. Fully automatic FGT and BPE quantification. Med Phys 2021;48:238-252."],
+    "bpe_category": ["Cohort-tertile binning of continuous BPE; ACR BI-RADS BPE categories (Wei 2021)."],
 }

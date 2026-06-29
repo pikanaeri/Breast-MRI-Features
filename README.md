@@ -37,19 +37,24 @@ pytest tests/                        # sanity tests
 
 ## Where each variable comes from (code → method)
 
-| Feature | Function | Method / citation |
+These are the **12 imaging concepts** used as model variables (the canonical set):
+
+| Concept | Function | Method / citation |
 |---|---|---|
 | Tumor volume | `shape.voxel_volume_mm3` | IBSI volume (voxel counting) — Zwanenburg 2020 |
 | Sphericity | `shape.mesh_sphericity` | IBSI mesh sphericity (marching cubes) — Zwanenburg 2020; PyRadiomics (van Griethuysen 2017) |
 | Longest diameter | `shape.max_2d_diameter_mm` | IBSI max 2-D diameter (slice) / RECIST 1.1 — Eisenhauer 2009 |
-| Solidity | `shape.solidity` | 3-D convex-hull solidity — scikit-image regionprops (van der Walt 2014) |
-| Elongation / flatness | `shape.elongation_flatness` | IBSI PCA eigenvalue ratios — Zwanenburg 2020 |
-| Spiculation | `shape.spiculation_index` | radial-gradient analysis — Gilhuijs 1998; Huang 2013 |
-| Multifocality | `shape.n_components` | connected components |
-| Kinetic curve / initial enh. | `kinetics.signal_enhancement` → `birads.*` | SER curve descriptors — Agliozzo 2012; Dalmış 2016 |
-| Internal enhancement (rim/hetero) | `kinetics.signal_enhancement` → `birads.internal_enhancement` | rim ratio + enhancement CoV — Agliozzo 2012; Huang 2013 |
-| BPE (+ 3-category) | `bpe.bpe_percent`, `bpe.bpe_categories` | volume/intensity BPE, cohort cut-offs — Wei 2021; Zhu 2026 |
-| BI-RADS thresholds | `birads.THRESHOLDS` | single rule table; categorisation applied downstream (investigator rule) |
+| Shape | `birads.shape` (sphericity threshold) | BI-RADS round/oval vs irregular (investigator rule) |
+| Margin | `birads.margin` (spiculation + irregularity) | radial-gradient analysis — Gilhuijs 1998; Huang 2013 |
+| Mass vs. NME | `birads.mass_vs_nme` (solidity, foci) | morphological CAD — Agliozzo 2012; Huang 2013 |
+| Multifocality | `birads.multifocality` (`shape.n_components`) | connected components |
+| Kinetic curve | `kinetics.signal_enhancement` → `birads.kinetic_curve` | SER curve descriptors — Agliozzo 2012; Dalmış 2016 |
+| Initial enhancement rate | `kinetics.signal_enhancement` → `birads.initial_enhancement_rate` | early-phase enhancement — Agliozzo 2012; Dalmış 2016 |
+| Internal enhancement | `kinetics.signal_enhancement` → `birads.internal_enhancement` | rim ratio + enhancement CoV — Agliozzo 2012; Huang 2013 |
+| BPE | `bpe.bpe_percent` | volume/intensity BPE — Wei 2021 |
+| BPE category (3-level) | `bpe.bpe_categories` | cohort tertiles of BPE — Wei 2021; ACR BI-RADS |
+
+**Intermediate measurements** (computed only to derive the categorical concepts above — not standalone concepts): `shape.solidity` (→ mass-vs-NME), `shape.spiculation_index` (→ margin), `shape.n_components` (→ mass-vs-NME, multifocality). The BI-RADS cut-offs live in one table, `birads.THRESHOLDS`. Other IBSI shape features (`shape.elongation_flatness`, `shape.max_3d_diameter_mm`) are available in the library but are **not part of the derived concept set**.
 
 `from breastmri_features import CITATIONS` gives the full reference list per feature.
 
@@ -72,7 +77,7 @@ vendor scale when both are combined in one cohort.
 
 | # | Reference | Used for |
 |---|-----------|----------|
-| 1 | Zwanenburg A, et al. The Image Biomarker Standardization Initiative (IBSI). *Radiology* 2020;295:328–338. | sphericity, volume, diameter, elongation/flatness |
+| 1 | Zwanenburg A, et al. The Image Biomarker Standardization Initiative (IBSI). *Radiology* 2020;295:328–338. | sphericity, volume, diameter |
 | 2 | van Griethuysen JJM, et al. Computational Radiomics System to Decode the Radiographic Phenotype (PyRadiomics). *Cancer Res* 2017;77:e104–e107. | reference-implementation parity |
 | 3 | Eisenhauer EA, et al. New response evaluation criteria in solid tumours: RECIST 1.1. *Eur J Cancer* 2009;45:228–247. | longest diameter |
 | 4 | van der Walt S, et al. scikit-image: image processing in Python. *PeerJ* 2014;2:e453. | 3-D solidity |

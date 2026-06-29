@@ -108,8 +108,12 @@ def n_components(mask) -> int:
     return int(k)
 
 
-def keep_largest_components(mask, n: int = 5):
-    """Keep the n largest connected components — removes ground-truth speckle noise."""
+def keep_largest_components(mask, n: int = 2):
+    """Keep the n largest connected components — removes ground-truth speckle noise.
+
+    Default n=2 keeps the dominant lesion plus at most one satellite (preserving bifocal disease);
+    n=1 reduces to a single island.
+    """
     from scipy import ndimage
     m = np.asarray(mask) > 0
     if m.sum() == 0:

@@ -15,7 +15,7 @@ from . import shape as _shape, kinetics as _kin, birads as _b
 
 
 def derive_features(mask, phases, spacing, *, sheet: dict | None = None,
-                    clean_components: int = 5) -> dict:
+                    clean_components: int = 2) -> dict:
     """Derive all features.
 
     Parameters
@@ -48,20 +48,20 @@ def derive_features(mask, phases, spacing, *, sheet: dict | None = None,
         else:
             cont[alias] = alg[k]; prov[alias] = "algorithm"
 
-    # auxiliary shape descriptors
-    solidity = _shape.solidity(mask)
-    elong, flat = _shape.elongation_flatness(mask, sp)
-    spic = _shape.spiculation_index(mask, sp)
-    irregularity = 1.0 / max(cont["sphericity"], 1e-3)   # boundary irregularity proxy
-    n_foci = _shape.n_components(mask)
+    # intermediate shape descriptors that FEED the categorical BI-RADS concepts below
+    # (not standalone concepts themselves; shape.elongation_flatness is available in the library
+    #  but is not part of the derived concept set, so it is not computed here).
+    solidity = _shape.solidity(mask)                     # -> mass_vs_nme
+    spic = _shape.spiculation_index(mask, sp)            # -> margin
+    irregularity = 1.0 / max(cont["sphericity"], 1e-3)  # boundary-irregularity proxy -> margin
+    n_foci = _shape.n_components(mask)                   # -> mass_vs_nme, multifocality
 
     # kinetics
     k = _kin.signal_enhancement(phases, mask)
 
     out = dict(cont)
     out.update({
-        "solidity": solidity, "elongation": elong, "flatness": flat,
-        "spiculation": spic, "n_foci": n_foci,
+        "solidity": solidity, "spiculation": spic, "n_foci": n_foci,
         "shape": _b.shape(cont["sphericity"]),
         "margin": _b.margin(spic, irregularity),
         "mass_vs_nme": _b.mass_vs_nme(solidity, n_foci),
