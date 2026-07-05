@@ -66,9 +66,9 @@ published sheet:
 | Feature | Pearson r | alg/sheet ratio |
 |---|---|---|
 | Tumor volume | 0.998 | 0.95 |
-| Sphericity | 0.815 | 1.10 |
-| Longest diameter (RECIST) | 0.558 | ~1.0 (pre-calibrated) |
-| BPE (%) | 0.298 | 1.31 |
+| Sphericity | 0.814 | 1.10 |
+| Longest diameter (RECIST) | 0.547 | ~1.0 (pre-calibrated) |
+| BPE (%) | 0.299 | 1.31 |
 
 Volume reproduces the vendor values almost exactly and sphericity closely; the longest diameter (a
 manual RECIST measurement) is approximated by the in-plane caliper and is linearly calibrated to the
