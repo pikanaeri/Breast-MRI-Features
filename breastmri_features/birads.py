@@ -17,7 +17,7 @@ from __future__ import annotations
 THRESHOLDS = {
     "shape_sphericity": 0.82,     # sphericity >= -> round/oval
     "margin_spiculation": 0.45,   # spiculation index >= -> spiculated
-    "margin_irregular": 1.15,     # boundary irregularity below -> circumscribed
+    "margin_irregular": 0.25,     # spiculation index <= -> circumscribed (else irregular)
     "nme_solidity": 0.50,         # solidity below (or >=3 foci) -> non-mass enhancement
     "curve_persistent": 10.0,     # delayed % >= -> persistent
     "curve_washout": -10.0,       # delayed % <= -> washout
@@ -27,7 +27,7 @@ THRESHOLDS = {
     "hetero_cov": 0.60,           # enhancement CoV >= -> heterogeneous
 }
 # per-concept scale used to normalise the threshold margin into a confidence
-_SCALE = {"shape": 0.12, "mass_vs_nme": 0.15, "margin_spic": 0.20, "margin_irreg": 0.30,
+_SCALE = {"shape": 0.12, "mass_vs_nme": 0.15, "margin_spic": 0.20, "margin_irreg": 0.15,
           "curve": 10.0, "init": 25.0, "rim": 0.30, "hetero": 0.25}
 
 T = THRESHOLDS
@@ -45,15 +45,24 @@ def shape_conf(sphericity):
     return _conf(sphericity - T["shape_sphericity"], _SCALE["shape"])
 
 
-def margin(spiculation, irregularity):
-    if spiculation >= T["margin_spiculation"]:
+def margin(spiculation, *, spic_hi=None, spic_lo=None):
+    """BI-RADS margin from the boundary **spiculation index** (a boundary descriptor), not from
+    sphericity (a shape descriptor): spiculated if >= spic_hi, circumscribed if <= spic_lo, else
+    irregular. `spic_hi`/`spic_lo` default to the fixed table values, which are approximations of
+    the cohort-calibrated P75/P25 cut-points used in the manuscript; pass calibrated percentiles to
+    reproduce those exactly."""
+    hi = T["margin_spiculation"] if spic_hi is None else spic_hi
+    lo = T["margin_irregular"] if spic_lo is None else spic_lo
+    if spiculation >= hi:
         return "spiculated"
-    return "circumscribed" if irregularity <= T["margin_irregular"] else "irregular"
+    return "circumscribed" if spiculation <= lo else "irregular"
 
-def margin_conf(spiculation, irregularity):
-    if spiculation >= T["margin_spiculation"]:
-        return _conf(spiculation - T["margin_spiculation"], _SCALE["margin_spic"])
-    return _conf(irregularity - T["margin_irregular"], _SCALE["margin_irreg"])
+def margin_conf(spiculation, *, spic_hi=None, spic_lo=None):
+    hi = T["margin_spiculation"] if spic_hi is None else spic_hi
+    lo = T["margin_irregular"] if spic_lo is None else spic_lo
+    if spiculation >= hi:
+        return _conf(spiculation - hi, _SCALE["margin_spic"])
+    return _conf(spiculation - lo, _SCALE["margin_irreg"])
 
 
 def mass_vs_nme(solidity, n_foci):

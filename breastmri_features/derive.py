@@ -52,8 +52,7 @@ def derive_features(mask, phases, spacing, *, sheet: dict | None = None,
     # (not standalone concepts themselves; shape.elongation_flatness is available in the library
     #  but is not part of the derived concept set, so it is not computed here).
     solidity = _shape.solidity(mask)                     # -> mass_vs_nme
-    spic = _shape.spiculation_index(mask, sp)            # -> margin
-    irregularity = 1.0 / max(cont["sphericity"], 1e-3)  # boundary-irregularity proxy -> margin
+    spic = _shape.spiculation_index(mask, sp)            # -> margin (boundary descriptor)
     n_foci = _shape.n_components(mask)                   # -> mass_vs_nme, multifocality
 
     # kinetics
@@ -63,7 +62,7 @@ def derive_features(mask, phases, spacing, *, sheet: dict | None = None,
     out.update({
         "solidity": solidity, "spiculation": spic, "n_foci": n_foci,
         "shape": _b.shape(cont["sphericity"]),
-        "margin": _b.margin(spic, irregularity),
+        "margin": _b.margin(spic),
         "mass_vs_nme": _b.mass_vs_nme(solidity, n_foci),
         "multifocality": _b.multifocality(n_foci),
         "kinetic_curve": _b.kinetic_curve(k["delayed_pct_mean"]),
@@ -71,7 +70,7 @@ def derive_features(mask, phases, spacing, *, sheet: dict | None = None,
         "internal_enhancement": _b.internal_enhancement(k["rim_ratio"], k["enh_cov"]),
         # ground-truth derivation confidences
         "shape_gtconf": _b.shape_conf(cont["sphericity"]),
-        "margin_gtconf": _b.margin_conf(spic, irregularity),
+        "margin_gtconf": _b.margin_conf(spic),
         "mass_vs_nme_gtconf": _b.mass_vs_nme_conf(solidity, n_foci),
         "multifocality_gtconf": _b.multifocality_conf(n_foci),
         "kinetic_curve_gtconf": _b.kinetic_curve_conf(k["delayed_pct_mean"]),
