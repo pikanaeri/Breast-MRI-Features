@@ -14,17 +14,22 @@ Categorisation thresholds are investigator-applied (see README).
 from __future__ import annotations
 
 # ---- decision thresholds (single source of truth) ----------------------------------------------
+# Defaults are the I-SPY2 cohort-calibrated cut-points (n=982; outcome-independent distribution
+# percentiles) used in the manuscript, so the standalone library reproduces those categorizations by
+# default. Pass per-call overrides / recalibrate per cohort as needed. The previous values were
+# uncalibrated textbook placeholders (e.g. shape 0.82, margin_irregular 0.25). The kinetic-curve cut
+# stays a fixed +/-10% clinical threshold (not a percentile).
 THRESHOLDS = {
-    "shape_sphericity": 0.82,     # sphericity >= -> round/oval
-    "margin_spiculation": 0.45,   # spiculation index >= -> spiculated
-    "margin_irregular": 0.25,     # spiculation index <= -> circumscribed (else irregular)
-    "nme_solidity": 0.50,         # solidity below (or >=3 foci) -> non-mass enhancement
-    "curve_persistent": 10.0,     # delayed % >= -> persistent
-    "curve_washout": -10.0,       # delayed % <= -> washout
-    "init_slow": 50.0,            # initial % below -> slow
-    "init_fast": 100.0,           # initial % above -> fast
-    "rim_ratio": 1.30,            # peripheral/core ratio >= -> rim enhancement
-    "hetero_cov": 0.60,           # enhancement CoV >= -> heterogeneous
+    "shape_sphericity": 0.285,    # sphericity >= -> round/oval           (was 0.82)
+    "margin_spiculation": 0.444,  # spiculation index >= -> spiculated    (was 0.45)
+    "margin_irregular": 0.349,    # spiculation index <= -> circumscribed (was 0.25 — undercalibrated)
+    "nme_solidity": 0.237,        # solidity below (or >=3 foci) -> non-mass enhancement  (was 0.50)
+    "curve_persistent": 10.0,     # delayed % >= -> persistent            (fixed clinical cut)
+    "curve_washout": -10.0,       # delayed % <= -> washout               (fixed clinical cut)
+    "init_slow": 115.19,          # initial % below -> slow               (was 50.0)
+    "init_fast": 138.69,          # initial % above -> fast               (was 100.0)
+    "rim_ratio": 0.847,           # peripheral/core ratio >= -> rim enhancement  (was 1.30)
+    "hetero_cov": 0.345,          # enhancement CoV >= -> heterogeneous   (was 0.60)
 }
 # per-concept scale used to normalise the threshold margin into a confidence
 _SCALE = {"shape": 0.12, "mass_vs_nme": 0.15, "margin_spic": 0.20, "margin_irreg": 0.15,
@@ -48,9 +53,8 @@ def shape_conf(sphericity):
 def margin(spiculation, *, spic_hi=None, spic_lo=None):
     """BI-RADS margin from the boundary **spiculation index** (a boundary descriptor), not from
     sphericity (a shape descriptor): spiculated if >= spic_hi, circumscribed if <= spic_lo, else
-    irregular. `spic_hi`/`spic_lo` default to the fixed table values, which are approximations of
-    the cohort-calibrated P75/P25 cut-points used in the manuscript; pass calibrated percentiles to
-    reproduce those exactly."""
+    irregular. `spic_hi`/`spic_lo` default to the I-SPY2 cohort-calibrated P75/P25 cut-points used in
+    the manuscript; pass other percentiles to recalibrate per cohort."""
     hi = T["margin_spiculation"] if spic_hi is None else spic_hi
     lo = T["margin_irregular"] if spic_lo is None else spic_lo
     if spiculation >= hi:
